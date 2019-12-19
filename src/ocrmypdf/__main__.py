@@ -27,6 +27,7 @@ from ._validation import check_closed_streams, check_options
 from .api import Verbosity, configure_logging
 from .cli import parser
 from .exceptions import BadArgsError, ExitCode, MissingDependencyError
+from .exec import shim_paths_with_program_files
 
 
 def run(args=None):
@@ -49,6 +50,7 @@ def run(args=None):
     )
     log = make_logger('ocrmypdf')
     log.debug('ocrmypdf ' + __version__)
+
     try:
         check_options(options)
     except ValueError as e:
