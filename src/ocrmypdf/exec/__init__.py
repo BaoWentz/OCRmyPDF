@@ -123,20 +123,20 @@ def get_version(program, *, version_arg='--version', regex=r'(\d+(\.\d+)*)', env
 def shim_paths_with_program_files(env=None):
     if not env:
         env = os.environ
-    program_files = os.environ.get('PROGRAMFILES', '')
+    program_files = env.get('PROGRAMFILES', '')
     if not program_files:
-        return os.environ['PATH']
+        return env.get('PATH', '')
     paths = []
     try:
         for dirname in os.listdir(program_files):
-            if dirname.lower().endswith('tesseract-ocr'):
-                paths.append(dirname)
-            if dirname.lower().endswith('gs'):
+            if dirname.lower() == 'tesseract-ocr':
+                paths.append(os.path.join(program_files, dirname))
+            if dirname.lower() == 'gs':
                 try:
-                    latest_gs = max(os.listdir(dirname), lambda d: float(d[2:]))
+                    latest_gs = max(os.listdir(os.path.join(program_files, dirname)), key=lambda d: float(d[2:]))
                 except (FileNotFoundError, NotADirectoryError):
                     continue
-                paths.append(os.path.join(dirname, 'gs', latest_gs, 'bin'))
+                paths.append(os.path.join(program_files, dirname, latest_gs, 'bin'))
     except EnvironmentError:
         pass
     paths.extend(
